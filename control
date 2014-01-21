@@ -1,0 +1,9 @@
+Package: com.expetelek.simplepasscodebuttons
+Name: SimplePasscodeButtons
+Depends: mobilesubstrate, preferenceloader
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: A tweak that hides the letters and/or numbers on the passcode buttons
+Maintainer: Adam Spindler
+Author: Adam Spindler
+Section: Tweaks
