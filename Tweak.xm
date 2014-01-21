@@ -58,6 +58,16 @@
     UIImage *toReturn = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
+    // zero is already centered, so we don't want to push that down farther
+    if (digit == 10)
+        return toReturn;
+    
+    // push the image down farther in the button, so that it's centered
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(s.width, s.height * 1.3), NO, 0.0f);
+    [toReturn drawInRect:CGRectMake(0, s.height * .3, s.width, s.height)];
+    toReturn = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
     return toReturn;
 }
 
