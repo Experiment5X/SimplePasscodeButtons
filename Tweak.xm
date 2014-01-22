@@ -13,6 +13,9 @@
 
 @end
 
+//cache the current setting here
+static int buttonStyle=0;
+
 %hook TPNumberPadButton
 
 
@@ -75,15 +78,28 @@
 // this will return the type of image that the user has specified via the preferences
 + (UIImage *)getCorrectImage:(UIImage *)originalImage digit:(unsigned)digit
 {
-    NSString *settingsPath = @"/var/mobile/Library/Preferences/com.expetelek.simplepasscodebuttonspreferences.plist";
-	NSDictionary *prefs = [[NSDictionary alloc] initWithContentsOfFile:settingsPath];
-    
-    if ([prefs[@"ButtonStyle"] integerValue] == 0)
+    if (buttonStyle == 0)
         return originalImage;
-    else if ([prefs[@"ButtonStyle"] integerValue] == 1)
+    else if (buttonStyle == 1)
         return [self clipImage:originalImage digit:digit];
     else /*if ([prefs[@"ButtonStyle"] integerValue] == 2)*/
         return nil;
 }
 
 %end
+
+static void loadSettings(){
+	NSDictionary *prefs = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.expetelek.simplepasscodebuttonspreferences.plist"];
+    buttonStyle=[prefs[@"ButtonStyle"] integerValue];
+    [prefs release];
+}
+
+static void settingsChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo){
+    loadSettings();
+}
+
+%ctor{
+    //listen for changes in settings
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, settingsChanged, CFSTR("com.expetelek.simplepasscodebuttons.settingsChanged"), NULL, CFNotificationSuspensionBehaviorCoalesce);
+    loadSettings();
+}
